@@ -13,15 +13,14 @@ import Navigation from "@/components/layout/navigation";
 
 export default function Home() {
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
+    <main className="min-h-screen flex flex-col">
+      <div className="flex-1 w-full flex flex-col gap-1">
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16 bg-opacity-90">
           <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
             <div className="flex gap-5 items-center font-semibold">
               <Link href={"/"}>Secretaria de Transito de Sabaneta</Link>
-              <Navigation/>
+              <Navigation />
             </div>
-            
             {!hasEnvVars ? (
               <EnvVarWarning />
             ) : (
@@ -31,20 +30,28 @@ export default function Home() {
             )}
           </div>
         </nav>
-        <div className="flex-1 flex flex-col gap-20 max-w-5xl p-5">
-          <main className="flex-1 flex flex-col gap-6 px-4">
-            <div className="fixed inset-0 -z-10">
-          <Image
-            src="/calle-77-sur_sabaneta21.jpg"
-            alt="fondo sabaneta"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-            <h2 className="font-medium text-xl mb-4">Sistema de transito del municipio de sabaneta</h2>
-          </main>
+
+        
+        {/* Sección con imagen de fondo a ancho completo */}
+        <div className="relative flex-1 w-full min-h-screen flex flex-col gap-20 items-center p-5">
+          {/* Imagen ocupa todo el ancho del contenedor padre */}
+          <div className="absolute inset-0 -z-10 overflow-hidden">
+            <Image
+              src="/calle-77-sur_sabaneta21.jpg"
+              alt="fondo sabaneta"
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-black/50" />
+          </div>
+
+          {/* Contenido centrado con max-w */}
+          <div className="max-w-5xl w-full">
+            <main className="flex-1 flex flex-col gap-6 px-4">
+              <h2 className="font-medium text-xl mb-4 text-white">Sistema de transito del municipio de sabaneta</h2>
+            </main>
+          </div>
         </div>
 
         <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
