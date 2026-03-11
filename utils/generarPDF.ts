@@ -2,7 +2,8 @@
 
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { analizarDatos, Carro, Propietario, Infraccion } from "./analisisReporte";
+import { analizarDatos} from "./analisisReporte";
+import { Carro, Infraccion, Propietario } from "./interfaces";
 
 export function generarReportePDF(
   carros: Carro[],

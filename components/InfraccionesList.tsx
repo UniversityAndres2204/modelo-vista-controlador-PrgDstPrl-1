@@ -1,41 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { Infraccion, TipoAccionado } from "@/utils/interfaces";
+import { useEffect, useState } from "react";
+import handleRequest from "./controller";
 
-type TipoAccionado = "agente" | "camara";
-
-interface Infraccion {
-  id: number;
-  placa_carro: string;
-  accionado: TipoAccionado;
-  fecha: string;
-}
-
-const accionadoIcono: Record<TipoAccionado, string> = {
+const accionadaIcono: Record<TipoAccionado, string> = {
   agente: "👮",
   camara: "📷",
 };
 
-const accionadoBadgeColor: Record<TipoAccionado, string> = {
+const accionadaBadgeColor: Record<TipoAccionado, string> = {
   agente: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
   camara: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300",
 };
 
-const infracciones: Infraccion[] = [
-  { id: 1, placa_carro: "ABC123", accionado: "agente", fecha: "2024-01-15" },
-  { id: 2, placa_carro: "XYZ789", accionado: "camara", fecha: "2024-02-20" },
-  { id: 3, placa_carro: "DEF456", accionado: "agente", fecha: "2024-03-10" },
-  { id: 4, placa_carro: "GHI321", accionado: "camara", fecha: "2024-04-05" },
-];
-
 export default function InfracccionesList() {
-  const [lista, setLista] = useState<Infraccion[]>(infracciones);
+  const [lista, setLista] = useState<Infraccion[]>([]);
   const [editando, setEditando] = useState<number | null>(null);
   const [temp, setTemp] = useState<Partial<Infraccion>>({});
 
+  useEffect(() => {
+      const fetchCarros = async () => {
+        const propietarios = await handleRequest({ tipoRequest: "read", tipoDato: "infraccion", dato: [] });
+        setLista(propietarios);
+      };
+      fetchCarros();
+      }, []);
+
   const handleEditar = (infraccion: Infraccion) => {
     setEditando(infraccion.id);
-    setTemp({ placa_carro: infraccion.placa_carro, accionado: infraccion.accionado, fecha: infraccion.fecha });
+    setTemp({ placa_carro: infraccion.placa_carro, accionada: infraccion.accionada, fecha: infraccion.fecha });
   };
 
   const handleConfirmar = () => {
@@ -76,7 +70,7 @@ export default function InfracccionesList() {
 
       {/* Tabla header */}
       <div className="grid grid-cols-[0.5fr_1.5fr_1fr_1fr_auto] gap-4 px-4 pb-2 mb-1">
-        {["ID", "Placa", "Accionado", "Fecha", "Acciones"].map((col) => (
+        {["ID", "Placa", "accionada", "Fecha", "Acciones"].map((col) => (
           <span key={col} className="text-xs font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-widest">
             {col}
           </span>
@@ -112,19 +106,19 @@ export default function InfracccionesList() {
               </span>
             )}
 
-            {/* Accionado */}
+            {/* accionada */}
             {editando === infraccion.id ? (
               <select
                 className="border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:border-zinc-400 focus:outline-none rounded-lg px-3 py-1.5 text-sm w-full"
-                value={temp.accionado}
-                onChange={(e) => setTemp({ ...temp, accionado: e.target.value as TipoAccionado })}
+                value={temp.accionada}
+                onChange={(e) => setTemp({ ...temp, accionada: e.target.value as TipoAccionado })}
               >
                 <option value="agente">Agente</option>
                 <option value="camara">Cámara</option>
               </select>
             ) : (
-              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit ${accionadoBadgeColor[infraccion.accionado]}`}>
-                {accionadoIcono[infraccion.accionado]} {infraccion.accionado}
+              <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold w-fit ${accionadaBadgeColor[infraccion.accionada]}`}>
+                {accionadaIcono[infraccion.accionada]} {infraccion.accionada}
               </span>
             )}
 

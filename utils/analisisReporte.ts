@@ -1,27 +1,7 @@
 // utils/analisisReporte.ts
 
-export interface Carro {
-  id: number,
-  placa: string;
-  marca: string;
-  tipo: string;
-  fechaMatricula: string;
-}
+import { Carro, Infraccion, Propietario } from "./interfaces";
 
-export interface Propietario {
-  id: number,
-  identificacion: number;
-  tipo: string;
-  nombre: string;
-  direccion: string;
-}
-
-export interface Infraccion {
-  id: number,
-  placa_carro: string;
-  accionado: string;
-  fecha: string;
-}
 
 export interface AnalisisReporte {
   // Carros
@@ -62,7 +42,7 @@ export function analizarDatos(
 
   const infraccionesPorAcicionado: Record<string, number> = {};
   for (const inf of infracciones) {
-    infraccionesPorAcicionado[inf.accionado] = (infraccionesPorAcicionado[inf.accionado] || 0) + 1;
+    infraccionesPorAcicionado[inf.accionada] = (infraccionesPorAcicionado[inf.accionada] || 0) + 1;
   }
 
   // --- Propietarios ---

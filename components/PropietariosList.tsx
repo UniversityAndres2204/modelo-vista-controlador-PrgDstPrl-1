@@ -1,16 +1,8 @@
 "use client";
 
-import { useState } from "react";
-
-type TipoPropietario = "persona" | "empresa";
-
-interface Propietario {
-  id: number;
-  identificacion: number;
-  tipo: TipoPropietario;
-  nombre: string;
-  direccion: string;
-}
+import { Propietario, TipoPropietario } from "@/utils/interfaces";
+import { useEffect, useState } from "react";
+import handleRequest from "./controller";
 
 const tipoIcono: Record<TipoPropietario, string> = {
   persona: "👤",
@@ -22,17 +14,18 @@ const tipoBadgeColor: Record<TipoPropietario, string> = {
   empresa: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
 };
 
-const propietarios: Propietario[] = [
-  { id: 1, identificacion: 1234567890, tipo: "persona", nombre: "Carlos Pérez", direccion: "Calle 10 #5-20, Sabaneta" },
-  { id: 2, identificacion: 9876543210, tipo: "persona", nombre: "Ana Gómez", direccion: "Carrera 3 #12-45, Sabaneta" },
-  { id: 3, identificacion: 900123456, tipo: "empresa", nombre: "Transportes Andinos S.A.S", direccion: "Av. El Poblado #34-10, Medellín" },
-  { id: 4, identificacion: 800987654, tipo: "empresa", nombre: "Logística Sur Ltda", direccion: "Calle 75 #80-15, Itagüí" },
-];
-
 export default function PropietariosList() {
-  const [lista, setLista] = useState<Propietario[]>(propietarios);
+  const [lista, setLista] = useState<Propietario[]>([]);
   const [editando, setEditando] = useState<number | null>(null);
   const [temp, setTemp] = useState<Partial<Propietario>>({});
+
+  useEffect(() => {
+    const fetchCarros = async () => {
+      const propietarios = await handleRequest({ tipoRequest: "read", tipoDato: "propietario", dato: [] });
+      setLista(propietarios);
+    };
+    fetchCarros();
+    }, []);
 
   const handleEditar = (propietario: Propietario) => {
     setEditando(propietario.identificacion);

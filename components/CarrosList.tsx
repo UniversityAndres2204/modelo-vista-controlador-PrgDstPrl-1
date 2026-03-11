@@ -1,16 +1,8 @@
 "use client";
 
-import { useState } from "react";
-
-type TipoCarro = "automovil" | "moto" | "carro pesado";
-
-interface Carro {
-  id: number;
-  placa: string;
-  marca: string;
-  tipo: TipoCarro;
-  fechaMatricula: string;
-}
+import { useState,useEffect } from "react";
+import handleRequest from "./controller";
+import { Carro, TipoCarro } from "@/utils/interfaces";
 
 const tipoIcono: Record<TipoCarro, string> = {
   automovil: "🚗",
@@ -24,21 +16,29 @@ const tipoBadgeColor: Record<TipoCarro, string> = {
   "carro pesado": "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300",
 };
 
-const carros: Carro[] = [
-  { id: 1, placa: "ABC123", marca: "Toyota", tipo: "automovil", fechaMatricula: "2020-03-15" },
-  { id: 2, placa: "XYZ789", marca: "Honda", tipo: "moto", fechaMatricula: "2019-07-22" },
-  { id: 3, placa: "DEF456", marca: "Volvo", tipo: "carro pesado", fechaMatricula: "2018-11-05" },
-  { id: 4, placa: "GHI321", marca: "Mazda", tipo: "automovil", fechaMatricula: "2021-01-30" },
-];
+// const carros: Carro[] = [
+//   { id: 1, placa: "ABC123", marca: "Toyota", tipo: "automovil", fechaMatricula: "2020-03-15" },
+//   { id: 2, placa: "XYZ789", marca: "Honda", tipo: "moto", fechaMatricula: "2019-07-22" },
+//   { id: 3, placa: "DEF456", marca: "Volvo", tipo: "carro pesado", fechaMatricula: "2018-11-05" },
+//   { id: 4, placa: "GHI321", marca: "Mazda", tipo: "automovil", fechaMatricula: "2021-01-30" },
+// ];
 
 export default function CarrosList() {
-  const [lista, setLista] = useState<Carro[]>(carros);
+  const [lista, setLista] = useState<Carro[]>([]);
   const [editando, setEditando] = useState<string | null>(null);
   const [temp, setTemp] = useState<Partial<Carro>>({});
 
+  useEffect(() => {
+  const fetchCarros = async () => {
+    const carros = await handleRequest({ tipoRequest: "read", tipoDato: "carro", dato: [] });
+    setLista(carros);
+  };
+  fetchCarros();
+  }, []);
+
   const handleEditar = (carro: Carro) => {
     setEditando(carro.placa);
-    setTemp({ marca: carro.marca, tipo: carro.tipo, fechaMatricula: carro.fechaMatricula });
+    setTemp({ marca: carro.marca, tipo: carro.tipo, fecha_matricula: carro.fecha_matricula });
   };
 
   const handleConfirmar = () => {
@@ -135,11 +135,11 @@ export default function CarrosList() {
               <input
                 type="date"
                 className="border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:border-zinc-400 focus:outline-none rounded-lg px-3 py-1.5 text-sm w-full"
-                value={temp.fechaMatricula}
-                onChange={(e) => setTemp({ ...temp, fechaMatricula: e.target.value })}
+                value={temp.fecha_matricula}
+                onChange={(e) => setTemp({ ...temp, fecha_matricula: e.target.value })}
               />
             ) : (
-              <span className="text-zinc-400 dark:text-zinc-500 text-sm">{carro.fechaMatricula}</span>
+              <span className="text-zinc-400 dark:text-zinc-500 text-sm">{carro.fecha_matricula}</span>
             )}
 
             {/* Acciones */}
