@@ -2,7 +2,7 @@
 
 import { Propietario, TipoPropietario } from "@/utils/interfaces";
 import { useEffect, useState } from "react";
-import handleRequest from "./controller";
+import handleRequest from "../lib/controller";
 
 const tipoIcono: Record<TipoPropietario, string> = {
   persona: "👤",

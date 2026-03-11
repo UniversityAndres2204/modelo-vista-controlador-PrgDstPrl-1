@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { generarReportePDF } from "@/utils/generarPDF";
-import handleRequest from "./controller";
+import handleRequest from "../lib/controller";
 import { Carro, Infraccion, Propietario } from "@/utils/interfaces";
 
 export default function GenerarReporteButton() {

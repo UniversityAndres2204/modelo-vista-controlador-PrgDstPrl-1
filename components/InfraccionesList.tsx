@@ -2,7 +2,7 @@
 
 import { Infraccion, TipoAccionado } from "@/utils/interfaces";
 import { useEffect, useState } from "react";
-import handleRequest from "./controller";
+import handleRequest from "../lib/controller";
 
 const accionadaIcono: Record<TipoAccionado, string> = {
   agente: "👮",

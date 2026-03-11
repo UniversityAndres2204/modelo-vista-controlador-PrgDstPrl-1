@@ -1,7 +1,6 @@
 import { ReportData, RequestModel } from "@/utils/interfaces";
 import { read } from "./crud";
 
-
 export async function operacionCarro(request: RequestModel){
     if (request.tipoRequest === "read"){
         return read("carro")

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState,useEffect } from "react";
-import handleRequest from "./controller";
+import handleRequest from "../lib/controller";
 import { Carro, TipoCarro } from "@/utils/interfaces";
 
 const tipoIcono: Record<TipoCarro, string> = {
