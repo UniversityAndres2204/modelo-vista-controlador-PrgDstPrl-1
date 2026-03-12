@@ -7,7 +7,7 @@ import { Infraccion, TipoAccionado } from "@/lib/interfaces";
 import {
   crearInfraccion,
   actualizarInfraccion,
-  eliminarInfraccion, obtenerInfraccionPorPropietario,
+  eliminarInfraccion, obtenerInfracciones,
 } from "@/lib/models/infraccionModel";
 
 const accionadaIcono: Record<TipoAccionado, string> = {
@@ -28,8 +28,8 @@ export default function InfraccionesList({infracciones, userId}: { infracciones:
   const [creando, setCreando] = useState(false);
   const [temp, setTemp] = useState<Partial<Infraccion>>({});
 
-  const obtenerInfracciones = async () => {
-    const res = await obtenerInfraccionPorPropietario(userId);
+  const obtenerInfraccionesParaComponente = async () => {
+    const res = await obtenerInfracciones();
     setLista(res as Infraccion[]);
   }
 
@@ -59,7 +59,7 @@ export default function InfraccionesList({infracciones, userId}: { infracciones:
         alert("No existe esa placa")
       }
     }
-    obtenerInfracciones();
+    obtenerInfraccionesParaComponente();
     setEditando(null);
     router.refresh();
   };
@@ -72,7 +72,7 @@ export default function InfraccionesList({infracciones, userId}: { infracciones:
   const handleEliminar = async (id: number) => {
     await eliminarInfraccion(id);
     setLista(lista.filter((i) => i.id !== id));
-    obtenerInfracciones();
+    obtenerInfraccionesParaComponente();
     router.refresh();
   };
 
