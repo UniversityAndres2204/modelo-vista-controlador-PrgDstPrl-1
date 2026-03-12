@@ -4,6 +4,7 @@ export type Crud = "create" | "read" | "update" | "delete";
 // table models
 export type TipoPropietario = "persona" | "empresa";
 export interface Propietario {
+  id: string;
   identificacion: number;
   tipo: TipoPropietario;
   nombre: string;

@@ -25,7 +25,7 @@ export default function PropietariosList({userId, propietarios}: { userId: strin
   const [lista, setLista] = useState<Propietario[]>(propietarios);
   const [editando, setEditando] = useState<number | null>(null);
   const [temp, setTemp] = useState<Partial<Propietario>>({});
-
+ 
   const cargarPropietarios = async () => {
     const propietarios = await obtenerPropietarios();
     setLista(propietarios);
@@ -44,6 +44,7 @@ export default function PropietariosList({userId, propietarios}: { userId: strin
     if (editando === null) return;
 
     await actualizarPropietario({
+      id: temp.id!,
       identificacion: editando,
       tipo: temp.tipo!,
       nombre: temp.nombre!,
@@ -66,6 +67,7 @@ export default function PropietariosList({userId, propietarios}: { userId: strin
 
   const handleCrear = async () => {
     const nuevo: Propietario = {
+      id: '',
       identificacion: Date.now(),
       tipo: "persona",
       nombre: "Nuevo propietario",
@@ -207,7 +209,7 @@ export default function PropietariosList({userId, propietarios}: { userId: strin
                   >
                     Editar
                   </button>
-
+                  {userId !== propietario.id ? (
                   <button
                     onClick={() =>
                       handleEliminar(propietario.identificacion)
@@ -215,7 +217,7 @@ export default function PropietariosList({userId, propietarios}: { userId: strin
                     className="px-3 py-1.5 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
                   >
                     Eliminar
-                  </button>
+                  </button>):(<div></div>)}
                 </>
               )}
             </div>
