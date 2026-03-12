@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { generarReportePDF } from "@/utils/generarPDF";
 import handleRequest from "../lib/controller";
-import { Carro, Infraccion, Propietario } from "@/utils/interfaces";
+import { Carro, Infraccion, Propietario } from "@/lib/interfaces";
 
 export default function GenerarReporteButton() {
   const [loading, setLoading] = useState(false);

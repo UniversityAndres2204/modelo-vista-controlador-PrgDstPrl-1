@@ -1,6 +1,6 @@
 "use client";
 
-import { Infraccion, TipoAccionado } from "@/utils/interfaces";
+import { Infraccion, TipoAccionado } from "@/lib/interfaces";
 import { useEffect, useState } from "react";
 import handleRequest from "../lib/controller";
 

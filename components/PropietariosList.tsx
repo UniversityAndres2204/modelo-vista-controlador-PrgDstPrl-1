@@ -1,6 +1,6 @@
 "use client";
 
-import { Propietario, TipoPropietario } from "@/utils/interfaces";
+import { Propietario, TipoPropietario } from "@/lib/interfaces";
 import { useEffect, useState } from "react";
 import handleRequest from "../lib/controller";
 
