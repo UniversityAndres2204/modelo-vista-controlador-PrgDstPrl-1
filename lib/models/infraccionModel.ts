@@ -15,8 +15,12 @@ export async function crearInfraccion(inf: Omit<Infraccion, "id">) {
     .insert(inf)
     .select()
     .single();
-
-  if (error) throw new Error(error.message);
+  
+  if (error?.message === 'insert or update on table "infraccion" violates foreign key constraint "infraccion_carro_fkey"') {
+    return}
+  else if(error){
+    throw new Error(error.message)
+  }
 
   return data;
 }
