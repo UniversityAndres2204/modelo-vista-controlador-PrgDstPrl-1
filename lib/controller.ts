@@ -1,4 +1,4 @@
-import { RequestController } from "@/utils/interfaces";
+import { RequestController } from "@/lib/interfaces";
 import { operacionCarro, operacionInfraccion, operacionPropietario, operacionReporte } from "./model";
 
 export default async function handleRequest(request: RequestController): Promise<any> {

@@ -1,5 +1,5 @@
-import { ReportData, RequestModel } from "@/utils/interfaces";
-import { read } from "./crud";
+import { ReportData, RequestModel } from "@/lib/interfaces";
+import { read } from "./models/crud";
 
 export async function operacionCarro(request: RequestModel){
     if (request.tipoRequest === "read"){

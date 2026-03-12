@@ -1,28 +1,8 @@
-export type TipoCarro = "automovil" | "moto" | "carro pesado";
 export type Tabla = "carro" | "propietario" | "infraccion";
 export type Crud = "create" | "read" | "update" | "delete";
 
-export interface Carro {
-  id: number;
-  placa: string;
-  marca: string;
-  tipo: TipoCarro;
-  fecha_matricula: string;
-}
-
-export interface RequestModel{
-    tipoRequest: string;
-    dato: any[];
-}
-
-export interface RequestController{
-    tipoRequest: string;
-    tipoDato: Tabla|null;
-    dato: any[];
-}
-
+// table models
 export type TipoPropietario = "persona" | "empresa";
-
 export interface Propietario {
   id: number;
   identificacion: number;
@@ -32,12 +12,33 @@ export interface Propietario {
 }
 
 export type TipoAccionado = "agente" | "camara";
-
 export interface Infraccion {
   id: number;
   placa_carro: string;
   accionada: TipoAccionado;
   fecha: string;
+}
+
+export type TipoCarro = "automovil" | "moto" | "carro pesado";
+export interface Carro {
+  id: number;
+  placa: string;
+  marca: string;
+  tipo: TipoCarro;
+  fecha_matricula: string;
+  propietario: string;
+}
+
+// request models and controllers
+export interface RequestModel{
+    tipoRequest: string;
+    dato: any[];
+}
+
+export interface RequestController{
+    tipoRequest: string;
+    tipoDato: Tabla|null;
+    dato: any[];
 }
 
 export interface ReportData {
