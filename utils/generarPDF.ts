@@ -10,6 +10,8 @@ export function generarReportePDF(
   propietarios: Propietario[],
   infracciones: Infraccion[]
 ) {
+
+  console.log(carros, propietarios, infracciones);
   const analisis = analizarDatos(carros, propietarios, infracciones);
   const doc = new jsPDF();
   const fechaHoy = new Date().toLocaleDateString("es-CO", {

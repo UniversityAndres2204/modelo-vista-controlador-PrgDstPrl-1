@@ -4,7 +4,6 @@ export type Crud = "create" | "read" | "update" | "delete";
 // table models
 export type TipoPropietario = "persona" | "empresa";
 export interface Propietario {
-  id: number;
   identificacion: number;
   tipo: TipoPropietario;
   nombre: string;
@@ -21,7 +20,6 @@ export interface Infraccion {
 
 export type TipoCarro = "automovil" | "moto" | "carro pesado";
 export interface Carro {
-  id: number;
   placa: string;
   marca: string;
   tipo: TipoCarro;

@@ -1,8 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Carro, TipoCarro } from "@/lib/interfaces";
-import { obtenerCarroPorPropietario } from "@/lib/models/carroModel";
+import {useEffect, useState} from "react";
+import {Carro, TipoCarro} from "@/lib/interfaces";
+import {
+  actualizarCarro,
+  crearCarro,
+  eliminarCarro, obtenerCarroPorPropietario,
+} from "@/lib/models/carroModel";
+import {useRouter} from "next/navigation";
 
 const tipoIcono: Record<TipoCarro, string> = {
   automovil: "🚗",
@@ -11,25 +16,33 @@ const tipoIcono: Record<TipoCarro, string> = {
 };
 
 const tipoBadgeColor: Record<TipoCarro, string> = {
-  automovil: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+  automovil:
+    "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
   moto: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
-  "carro pesado": "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300",
+  "carro pesado":
+    "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300",
 };
 
-export default function CarrosList() {
-  const [lista, setLista] = useState<Carro[]>([]);
+interface Props {
+  carros: Carro[],
+  userId: string
+}
+
+export default function CarrosList({carros, userId}: Props) {
+  const router = useRouter();
+
+  const [lista, setLista] = useState<Carro[]>(carros);
   const [editando, setEditando] = useState<string | null>(null);
   const [temp, setTemp] = useState<Partial<Carro>>({});
   const [creando, setCreando] = useState(false);
 
   useEffect(() => {
-    const fetchCarros = async () => {
-      const res = await obtenerCarroPorPropietario("1");
-      const carros: Carro[] = res.success;
-      setLista(carros);
-    };
-    fetchCarros();
-  }, []);
+    const cargarCarros = async () => {
+      let res = await obtenerCarroPorPropietario(userId);
+      setLista(res.success as Carro[]);
+    }
+    cargarCarros();
+  }, [creando, editando, temp]);
 
   const handleEditar = (carro: Carro) => {
     setEditando(carro.placa);
@@ -43,17 +56,21 @@ export default function CarrosList() {
       marca: "",
       tipo: "automovil",
       fecha_matricula: "",
+      propietario: userId
     });
   };
 
-  const handleConfirmar = () => {
+  const handleConfirmar = async () => {
     if (creando) {
       const nuevo = temp as Carro;
-      // TODO: Update in database
-      setLista([nuevo, ...lista]);
+      nuevo.propietario = userId;
+      await crearCarro(nuevo);
       setCreando(false);
+    } else if (editando) {
+      await actualizarCarro(temp as Carro);
     }
 
+    router.refresh();
     setEditando(null);
   };
 
@@ -62,51 +79,53 @@ export default function CarrosList() {
     setEditando(null);
   };
 
-  const handleEliminar = (placa: string) => {
-    setLista(lista.filter((c) => c.placa !== placa));
+  const handleEliminar = async (placa: string) => {
+    await eliminarCarro(placa);
+    router.refresh();
   };
 
-  const inputBase = "min-w-0 w-full border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:border-zinc-400 focus:outline-none rounded-lg px-2 py-1 text-sm";
+  const inputBase =
+    "min-w-0 w-full border border-zinc-200 dark:border-zinc-600 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 focus:border-zinc-400 focus:outline-none rounded-lg px-2 py-1 text-sm";
+
   const renderInputs = () => (
     <>
-      {/* placa */}
       <input
         className={`${inputBase} font-mono`}
         value={temp.placa ?? ""}
-        onChange={(e) => setTemp({ ...temp, placa: e.target.value })}
+        onChange={(e) => setTemp({...temp, placa: e.target.value})}
       />
 
-      {/* marca */}
       <input
         className={inputBase}
         value={temp.marca ?? ""}
-        onChange={(e) => setTemp({ ...temp, marca: e.target.value })}
+        onChange={(e) => setTemp({...temp, marca: e.target.value})}
       />
 
-      {/* tipo */}
       <select
         className={inputBase}
         value={temp.tipo}
-        onChange={(e) => setTemp({ ...temp, tipo: e.target.value as TipoCarro })}
+        onChange={(e) =>
+          setTemp({...temp, tipo: e.target.value as TipoCarro})
+        }
       >
         <option value="automovil">Automóvil</option>
         <option value="moto">Moto</option>
         <option value="carro pesado">Carro pesado</option>
       </select>
 
-      {/* fecha */}
       <input
         type="date"
         className={inputBase}
         value={temp.fecha_matricula ?? ""}
-        onChange={(e) => setTemp({ ...temp, fecha_matricula: e.target.value })}
+        onChange={(e) =>
+          setTemp({...temp, fecha_matricula: e.target.value})
+        }
       />
     </>
   );
 
   return (
     <div className="w-full max-w-4xl">
-
       {/* header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -129,27 +148,19 @@ export default function CarrosList() {
       {/* tabla header */}
       <div className="grid grid-cols-[1fr_1.5fr_1.5fr_1.5fr_auto] gap-4 px-4 pb-2 mb-1">
         {["Placa", "Marca", "Tipo", "Matrícula", "Acciones"].map((col) => (
-          <span key={col} className="text-xs font-semibold text-zinc-400 uppercase">
+          <span
+            key={col}
+            className="text-xs font-semibold text-zinc-400 uppercase"
+          >
             {col}
           </span>
         ))}
       </div>
 
       <ul className="flex flex-col gap-2">
-
-        {/* fila sticky para crear */}
         {creando && (
           <li
-            className="
-            sticky top-0 z-10
-            grid grid-cols-[1fr_1.5fr_1.5fr_1.5fr_auto]
-            gap-4 items-center
-            bg-green-50 dark:bg-green-900/20
-            border border-green-200 dark:border-green-700
-            rounded-xl px-4 py-4
-            animate-[fadeIn_.25s_ease]
-          "
-          >
+            className="sticky top-0 z-10 grid grid-cols-[1fr_1.5fr_1.5fr_1.5fr_auto] gap-4 items-center bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl px-4 py-4">
             {renderInputs()}
 
             <div className="flex gap-2">
@@ -170,18 +181,10 @@ export default function CarrosList() {
           </li>
         )}
 
-        {/* lista */}
         {lista.map((carro) => (
           <li
             key={carro.placa}
-            className="
-            grid grid-cols-[1fr_1.5fr_1.5fr_1.5fr_auto]
-            gap-4 items-center
-            bg-white dark:bg-zinc-800/60
-            border border-zinc-100 dark:border-zinc-700
-            hover:border-zinc-300
-            rounded-xl px-4 py-4
-          "
+            className="grid grid-cols-[1fr_1.5fr_1.5fr_1.5fr_auto] gap-4 items-center bg-white dark:bg-zinc-800/60 border border-zinc-100 dark:border-zinc-700 hover:border-zinc-300 rounded-xl px-4 py-4"
           >
             {editando === carro.placa ? (
               <>

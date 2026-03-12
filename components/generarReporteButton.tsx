@@ -3,8 +3,10 @@
 
 import { useEffect, useState } from "react";
 import { generarReportePDF } from "@/utils/generarPDF";
-import handleRequest from "../lib/controller";
 import { Carro, Infraccion, Propietario } from "@/lib/interfaces";
+import {obtenerCarros} from "@/lib/models/carroModel";
+import {obtenerPropietarios} from "@/lib/models/propietarioModel";
+import {obtenerInfracciones} from "@/lib/models/infraccionModel";
 
 export default function GenerarReporteButton() {
   const [loading, setLoading] = useState(false);
@@ -14,10 +16,12 @@ export default function GenerarReporteButton() {
 
   useEffect(() => {
     const fetchCarros = async () => {
-      const data = await handleRequest({ tipoRequest: "report", tipoDato: null, dato: [] });
-      setListaCarros(data.carros);
-      setListaPropietarios(data.propietarios);
-      setListaInfracciones(data.infracciones);
+      const carros = await obtenerCarros();
+      const propietarios = await obtenerPropietarios();
+      const infracciones = await obtenerInfracciones();
+      setListaCarros(carros);
+      setListaPropietarios(propietarios);
+      setListaInfracciones(infracciones);
     };
     fetchCarros();
     }, []);

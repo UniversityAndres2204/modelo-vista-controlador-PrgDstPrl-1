@@ -1,20 +1,20 @@
-import { AuthButton } from "@/components/auth-button";
-import { EnvVarWarning } from "@/components/env-var-warning";
-import Navigation from "@/components/layout/navigation";
-import { hasEnvVars } from "@/lib/utils";
-import Link from "next/link";
-import { Suspense } from "react";
 import CarrosList from "@/components/CarrosList";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import PropietariosList from "@/components/PropietariosList";
+import {obtenerCarroPorPropietario} from "@/lib/models/carroModel";
+import {createClient} from "@/lib/supabase/server";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const {data: { user },} = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+  const { success: carros } = await obtenerCarroPorPropietario(user.id);
+
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col gap-20 items-center">
-
         <main className="flex-1 flex flex-col gap-6 px-4">
-          <CarrosList />
+          <CarrosList userId={user.id} carros={carros}/>
         </main>
       </div>
     </main>

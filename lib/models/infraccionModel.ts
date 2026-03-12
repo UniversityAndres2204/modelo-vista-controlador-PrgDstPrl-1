@@ -3,57 +3,128 @@
 import { createClient } from "@/lib/supabase/server";
 import { Infraccion } from "@/lib/interfaces";
 
+/* =========================
+   CREAR
+========================= */
 
-
-export async function crearInfraccion(inf: Infraccion) {
+export async function crearInfraccion(inf: Omit<Infraccion, "id">) {
   const supabase = await createClient();
-  const res = await supabase
-    .from("carro")
-    .insert(inf)
-    .select();
 
-  if (res.error) { throw new Error(res.error.message) }
-  return { success: res.data }
+  const { data, error } = await supabase
+    .from("infraccion")
+    .insert(inf)
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  return data;
 }
 
-export async function obtenerInfraccionPorPropietario(idPropietario: string) {
+/* =========================
+   OBTENER TODAS
+========================= */
+
+export async function obtenerInfracciones() {
   const supabase = await createClient();
-  const res = await supabase
+
+  const { data, error } = await supabase
     .from("infraccion")
     .select("*")
-    .eq("propietario", idPropietario);
-  if (res.error) { throw new Error(res.error.message) }
-  return { success: res.data }
+    .order("fecha", { ascending: false });
+
+  if (error) throw new Error(error.message);
+
+  return data;
 }
+
+/* =========================
+   OBTENER POR ID
+========================= */
+
+export async function obtenerInfraccionPorId(id: number) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("infraccion")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) throw new Error(error.message);
+
+  return data;
+}
+
+/* =========================
+   OBTENER POR CARRO
+========================= */
 
 export async function obtenerInfraccionPorCarro(placa: string) {
   const supabase = await createClient();
-  const res = await supabase
+
+  const { data, error } = await supabase
     .from("infraccion")
     .select("*")
     .eq("placa_carro", placa);
-  if (res.error) { throw new Error(res.error.message) }
-  return { success: res.data }
+
+  if (error) throw new Error(error.message);
+
+  return data ?? [];
 }
+
+/* =========================
+   OBTENER POR PROPIETARIO
+========================= */
+
+export async function obtenerInfraccionPorPropietario(idPropietario: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("infraccion")
+    .select(`
+      *,
+      carro!inner (
+        propietario
+      )
+    `)
+    .eq("carro.propietario", idPropietario);
+
+  if (error) throw new Error(error.message);
+
+  return data ?? [];
+}
+
+/* =========================
+   ACTUALIZAR
+========================= */
 
 export async function actualizarInfraccion(inf: Infraccion) {
   const supabase = await createClient();
-  const res  = await supabase
+
+  const { error } = await supabase
     .from("infraccion")
-    .update( inf )
+    .update({
+      placa_carro: inf.placa_carro,
+      accionada: inf.accionada,
+      fecha: inf.fecha,
+    })
     .eq("id", inf.id);
 
-  if (res.error) { throw new Error(res.error.message)}
-  return { success: true };
+  return error;
 }
 
-export async function eliminarCarro(idInfraccion: string) {
+/* =========================
+   ELIMINAR
+========================= */
+
+export async function eliminarInfraccion(id: number) {
   const supabase = await createClient();
-  let res = await supabase
+
+  const { error } = await supabase
     .from("infraccion")
     .delete()
-    .eq("id", idInfraccion);
+    .eq("id", id);
 
-  if (res.error) { throw new Error(res.error.message)}
-  return { success: true }
+  return error;
 }

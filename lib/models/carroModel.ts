@@ -14,33 +14,44 @@ export async function crearCarro(car: Carro) {
   return { success: res.data }
 }
 
-export async function obtenerCarroPorPropietario(idPropietario: string) {
+export async function obtenerCarros() {
+  const supabase = await createClient();
+  const res = await supabase
+    .from("carro")
+    .select("*");
+
+  if (res.error) { throw new Error(res.error.message)}
+  return res.data;
+}
+
+export async function obtenerCarroPorPropietario(id: string) {
   const supabase = await createClient();
   const res = await supabase
     .from("carro")
     .select("*")
-    .eq("propietario", idPropietario);
+    .eq("propietario", id);
   if (res.error) { throw new Error(res.error.message) }
   return { success: res.data }
 }
 
 export async function actualizarCarro(car: Carro) {
   const supabase = await createClient();
+  delete car.id;
   const res  = await supabase
     .from("carro")
     .update( car )
-    .eq("id", car.id);
+    .eq("placa", car.placa);
 
   if (res.error) { throw new Error(res.error.message)}
   return { success: true };
 }
 
-export async function eliminarCarro(idCarro: string) {
+export async function eliminarCarro(placa: string) {
   const supabase = await createClient();
   let res = await supabase
     .from("carro")
     .delete()
-    .eq("id", idCarro);
+    .eq("placa", placa);
 
   if (res.error) { throw new Error(res.error.message)}
   return { success: true }
