@@ -5,7 +5,7 @@ import { Propietario } from "@/lib/interfaces";
 
 export async function crearPropietario(prop: Propietario) {
   const supabase = await createClient();
-
+  delete prop.id
   const res = await supabase
     .from("propietario")
     .insert(prop)
