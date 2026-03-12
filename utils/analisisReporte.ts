@@ -1,6 +1,6 @@
 // utils/analisisReporte.ts
 
-import { Carro, Infraccion, Propietario } from "./interfaces";
+import { Carro, Infraccion, Propietario } from "../lib/interfaces";
 
 
 export interface AnalisisReporte {
