@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import Image from "next/image";
+import {ApolloWrapper} from "@/app/ApolloWrapper";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -45,7 +46,9 @@ export default function RootLayout({
           />
           <div className="absolute inset-0 bg-black/50" />
         </div> */}
-          {children}
+          <ApolloWrapper>
+            {children}
+          </ApolloWrapper>
           {/* <Footer/> */}
         </ThemeProvider>
       </body>
