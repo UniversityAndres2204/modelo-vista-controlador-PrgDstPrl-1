@@ -1,9 +1,8 @@
-
 import PropietariosList from "@/components/PropietariosList";
 import {createClient} from "@/lib/supabase/server";
 import {obtenerPropietarios} from "@/lib/models/propietarioModel";
-import { query } from "@/ApolloClient";
-import { gql } from "@apollo/client";
+import {query} from "@/ApolloClient";
+import {gql} from "@apollo/client";
 
 const GET_PROPIETARIOS = gql`
   query GetPropietarios {
@@ -23,15 +22,15 @@ const GET_PROPIETARIOS = gql`
 
 export default async function Home() {
   const supabase = await createClient();
-  const { data: { user },} = await supabase.auth.getUser();
+  const {data: {user},} = await supabase.auth.getUser();
   if (!user) {
     throw new Error("User not authenticated");
   }
 
-  const { data } = await query({
+  const {data} = await query({
     query: GET_PROPIETARIOS,
-
   });
+
   console.log(data.propietarioCollection.edges);
 
   const propietarios = await obtenerPropietarios();

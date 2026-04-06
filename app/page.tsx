@@ -10,28 +10,13 @@ import Link from "next/link";
 import { Suspense } from "react";
 import Image from "next/image";
 import Navigation from "@/components/layout/navigation";
+import NavBar from "@/components/layout/NavBar";
 
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
       <div className="flex-1 w-full flex flex-col gap-1">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16 bg-opacity-90">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
-            <div className="flex gap-5 items-center font-semibold">
-              <Link href={"/"}>Secretaria de Transito de Sabaneta</Link>
-              <Navigation />
-            </div>
-            {!hasEnvVars ? (
-              <EnvVarWarning />
-            ) : (
-              <Suspense>
-                <AuthButton />
-              </Suspense>
-            )}
-          </div>
-        </nav>
-
-        
+        <NavBar></NavBar>
         {/* Sección con imagen de fondo a ancho completo */}
         <div className="relative flex-1 w-full min-h-screen flex flex-col gap-20 items-center p-5">
           {/* Imagen ocupa todo el ancho del contenedor padre */}

@@ -6,6 +6,7 @@ export default function Navigation() {
     { name: "Propietarios", href: "/propietarios" },
     { name: "Infracciones", href: "/infracciones" },
     { name: "Generar Reporte", href: "/reporte" },
+    { name: "GraphQL", href: "/graphql"}
   ];
 
   return (
