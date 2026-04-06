@@ -2,8 +2,22 @@
 
 import { createClient } from "@/lib/supabase/server";
 import {Carro} from "@/lib/interfaces";
-import { getClient } from "@/ApolloClient";
+import {getClient, query,} from "@/ApolloClient";
 import { gql } from "@apollo/client";
+
+const GET_CARROS_POR_PROPIETARIO = gql`
+  query ($propietario: String!) {
+    carrosPorPropietario(propietario: $propietario) {
+      id
+      placa
+      marca
+      tipo
+      fecha_matricula
+      propietario: propietarioIdentificacion 
+    }
+  }
+`;
+
 
 const CREATE_CARRO = gql`
   mutation CreateCarro($input: carroInsertInput!) {
@@ -14,40 +28,43 @@ const CREATE_CARRO = gql`
 `;
 
 const UPDATE_CARRO = gql`
-  mutation UpdateCarro($id: BigInt!, $input: carroUpdateInput!) {
-    updatecarroCollection(
-      set: $input
-      filter: { id: { eq: $id } }
+  mutation UpdateCarro(
+    $id: ID!
+    $marca: String
+    $tipo: String
+    $fecha_matricula: String
+  ) {
+    updateCarro(
+      id: $id
+      marca: $marca
+      tipo: $tipo
+      fecha_matricula: $fecha_matricula
     ) {
-      affectedCount
+      id
+      placa
+      marca
+      tipo
+      fecha_matricula
     }
   }
 `;
 
 const DELETE_CARRO = gql`
   mutation DeleteCarro($placa: String!) {
-    deleteFromcarroCollection(filter: { placa: { eq: $placa } }) {
-      affectedCount
-    }
+    deleteCarro(placa: $placa)
   }
 `;
 
 export async function crearCarro(car: Carro) {
-  // const supabase = await createClient();
-  // const res = await supabase
-  //   .from("carro")
-  //   .insert( car )
-  //   .select();
-
-  // if (res.error) { throw new Error(res.error.message) }
-  // return { success: res.data }
-
-  const { data } = await getClient().mutate({
+  let res = await mutate({
     mutation: CREATE_CARRO,
-    variables: { input: car },
+    variables: {
+      placa: carro.placa,
+      marca: carro.marca,
+      tipo: carro.tipo,
+      fecha_matricula: carro.fecha_matricula,
+    },
   });
-
-  return;
 }
 
 export async function obtenerCarros() {
@@ -61,13 +78,16 @@ export async function obtenerCarros() {
 }
 
 export async function obtenerCarroPorPropietario(id: string) {
-  const supabase = await createClient();
-  const res = await supabase
-    .from("carro")
-    .select("*")
-    .eq("propietario", id);
-  if (res.error) { throw new Error(res.error.message) }
-  return { success: res.data }
+  const res = await query({
+    query: GET_CARROS_POR_PROPIETARIO,
+    variables: { propietario: id },
+  });
+
+  if (!res.data?.carrosPorPropietario) {
+    throw new Error("No data fetched");
+  }
+
+  return res.data.carrosPorPropietario;
 }
 
 export async function actualizarCarro(car: Carro) {
@@ -79,12 +99,13 @@ export async function actualizarCarro(car: Carro) {
 
   // if (res.error) { throw new Error(res.error.message)}
   // return { success: true };
-
-  const Id = car.id
-  delete car.id
   const { data } = await getClient().mutate({
     mutation: UPDATE_CARRO,
-    variables: { id: Id ,input: car },
+    variables: {
+      placa: car.placa, marca: car.marca,
+      tipo: car.tipo,
+      fecha_matricula: car.fecha_matricula
+    },
   });
 
   return;

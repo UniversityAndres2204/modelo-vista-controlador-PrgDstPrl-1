@@ -39,7 +39,7 @@ export default function CarrosList({carros, userId}: Props) {
   useEffect(() => {
     const cargarCarros = async () => {
       let res = await obtenerCarroPorPropietario(userId);
-      setLista(res.success as Carro[]);
+      setLista(res as Carro[]);
     }
     cargarCarros();
   }, [creando, editando, temp]);

@@ -5,6 +5,18 @@ import { Propietario } from "@/lib/interfaces";
 import { getClient } from "@/ApolloClient";
 import { gql } from "@apollo/client";
 
+const GET_PROPIETARIOS = gql`
+  query {
+    propietario {
+          id
+          nombre
+          tipo
+          identificacion
+          direccion
+        }
+      }
+`;
+
 const CREATE_PROPIETARIO = gql`
   mutation CreatePropietario($input: propietarioInsertInput!) {
     insertIntopropietarioCollection(objects: [$input]) {

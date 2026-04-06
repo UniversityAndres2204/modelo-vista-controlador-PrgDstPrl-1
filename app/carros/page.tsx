@@ -1,27 +1,6 @@
 import CarrosList from "@/components/CarrosList";
 import {obtenerCarroPorPropietario} from "@/lib/models/carroModel";
 import {createClient} from "@/lib/supabase/server";
-import { query } from "@/ApolloClient";
-import { gql } from "@apollo/client";
-
-const GET_CARROS = gql`
-  query GetCarros {
-    carroCollection {
-      edges {
-        node {
-          id
-          placa
-          marca
-          tipo
-          fecha_matricula
-          propietario {
-            identificacion
-          }
-        }
-      }
-    }
-  }
-`;
 
 export default async function Home() {
   const supabase = await createClient();
@@ -30,14 +9,8 @@ export default async function Home() {
     throw new Error("User not authenticated");
   }
 
-  const { data } = await query({
-      query: GET_CARROS,
-  
-    });
-
-  console.log(data.carroCollection.edges);
-
-  const { success: carros } = await obtenerCarroPorPropietario(user.id);
+  console.log(user.id);
+  const carros  = await obtenerCarroPorPropietario(user.id);
 
   return (
     <main className="min-h-screen flex flex-col items-center">

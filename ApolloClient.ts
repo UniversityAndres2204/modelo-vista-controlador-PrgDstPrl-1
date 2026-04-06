@@ -20,12 +20,16 @@ const authLink = new SetContextLink(async (prevContext) => {
   };
 });
 
+const httpLink = new HttpLink({
+  uri: typeof window === 'undefined'
+    ? 'http://127.0.0.1:3000/api/graphql'   // servidor
+    : '/api/graphql',                       // cliente
+  fetchOptions: {},
+});
+
 export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
   return new ApolloClient({
     cache: new InMemoryCache(),
-    link: authLink.concat(new HttpLink({
-      uri: process.env.NEXT_PUBLIC_SUPABASE_URL+"/graphql/v1",
-      fetchOptions: {}
-    })),
+    link: authLink.concat(httpLink),
   });
 });

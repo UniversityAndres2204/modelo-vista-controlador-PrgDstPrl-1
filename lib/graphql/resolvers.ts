@@ -1,0 +1,200 @@
+import { createClient } from "@/lib/supabase/server";
+
+export const resolvers = {
+  Query: {
+    propietarios: async () => {
+      const supabase = await createClient();
+      const { data, error } = await supabase.from("propietario").select("*");
+      if (error) throw new Error(error.message);
+      return data;
+    },
+
+    carros: async () => {
+      const supabase = await createClient();
+      const { data, error } = await supabase.from("carro").select("*");
+      if (error) throw new Error(error.message);
+      return data;
+    },
+
+    carrosPorPropietario: async (_: any, { propietario }: any, ctx: any) => {
+      const { data, error } = await ctx.supabase
+        .from("carro")
+        .select("*")
+        .eq("propietario", propietario);
+      if (error) throw new Error(error.message);
+      return data;
+    },
+
+    carroByPlaca: async (_: any, { placa }: any) => {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from("carro")
+        .select("*")
+        .eq("placa", placa)
+        .single();
+      if (error) throw new Error(error.message);
+      return data;
+    },
+
+    infracciones: async () => {
+      const supabase = await createClient();
+      const { data, error } = await supabase.from("infraccion").select("*");
+      if (error) throw new Error(error.message);
+      return data;
+    },
+  },
+
+  Mutation: {
+    // PROPIETARIOS
+    crearPropietario: async (_: any, args: any) => {
+      const supabase = await createClient()
+      // No insertamos 'identificacion' porque es GENERATED ALWAYS AS IDENTITY
+      const { data, error } = await supabase
+        .from("propietario")
+        .insert({
+          nombre: args.nombre,
+          direccion: args.direccion,
+          tipo: args.tipo,
+        })
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data;
+    },
+
+    // CARROS
+    crearCarro: async (_: any, args: any) => {
+      const supabase = await createClient();
+      const {placa, marca, tipo, fecha_matricula, propietario} = args;
+
+      const {d, e} = await supabase
+        .from("propietario")
+        .select("*")
+        .eq("id", propietario);
+
+      console.log(d, e);
+
+
+      const { data, error } = await supabase
+        .from("carro")
+        .insert({placa, marca, tipo, fecha_matricula, propietario})
+        .select()
+        .single();
+
+      console.log(data, error)
+
+      if (error) throw new Error(error.message);
+      return data;
+    },
+
+    updateCarro: async (_: any, args: any, ctx: any) => {
+      const { placa, marca, tipo, fecha_matricula } = args;
+      const supabaseClient = ctx?.supabase || (await createClient());
+      const { data, error } = await supabaseClient
+        .from("carro")
+        .update({ placa, marca, tipo, fecha_matricula})
+        .eq("placa", placa)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      if (!data) throw new Error("Carro no encontrado");
+
+      return data;
+    },
+
+    deleteCarro: async (_: any, { placa }: any) => {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from("carro")
+        .delete()
+        .eq("placa", placa);
+
+      if (error) throw new Error(error.message);
+      return true;
+    },
+
+    // INFRACCIONES
+    crearInfraccion: async (_: any, args: any) => {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from("infraccion")
+        .insert({
+          fecha: args.fecha,
+          placa_carro: args.placa_carro,
+          accionada: args.accionada,
+        })
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data;
+    },
+  },
+
+  // === RELACIONES (Resolvers de campos) ===
+  Carro: {
+    propietario: async (parent: any, _: any, ctx: any) => {
+      const supabaseClient = ctx?.supabase || (await createClient());
+      const { data, error } = await supabaseClient
+        .from("propietario")
+        .select("*")
+        .eq("id", parent.propietario)
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data;
+    },
+
+    propietarioIdentificacion: async (parent: any, _: any, ctx: any) => {
+      const supabaseClient = ctx?.supabase || (await createClient());
+      const { data, error } = await supabaseClient
+        .from("propietario")
+        .select("id")
+        .eq("id", parent.propietario)
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data?.id;
+    },
+
+    infracciones: async (parent: any, _: any, ctx: any) => {
+      const supabaseClient = ctx?.supabase || (await createClient());
+      const { data, error } = await supabaseClient
+        .from("infraccion")
+        .select("*")
+        .eq("placa_carro", parent.placa);
+
+      if (error) throw new Error(error.message);
+      return data || [];
+    },
+  },
+
+  Propietario: {
+    carros: async (parent: any, _: any, ctx: any) => {
+      const supabaseClient = ctx?.supabase || (await createClient());
+      const { data, error } = await supabaseClient
+        .from("carro")
+        .select("*")
+        .eq("propietario", parent.id);
+
+      if (error) throw new Error(error.message);
+      return data || [];
+    },
+  },
+
+  Infraccion: {
+    carro: async (parent: any, _: any, ctx: any) => {
+      const supabaseClient = ctx?.supabase || (await createClient());
+      const { data, error } = await supabaseClient
+        .from("carro")
+        .select("*")
+        .eq("placa", parent.placa_carro)
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data;
+    },
+  },
+};
