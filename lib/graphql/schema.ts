@@ -18,6 +18,10 @@ export const typeDefs = /* GraphQL */ `
     propietarioIdentificacion: String!
     infracciones: [Infraccion!]!
   }
+  
+  input PropietarioInput {
+    id: String!
+  }
 
   type Infraccion {
     id: ID!
@@ -47,7 +51,7 @@ export const typeDefs = /* GraphQL */ `
       marca: String!
       tipo: String!
       fecha_matricula: String!
-      propietario: ID!
+      propietario: PropietarioInput!
     ): Carro!
     
     updateCarro(

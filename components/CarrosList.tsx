@@ -80,7 +80,12 @@ export default function CarrosList({carros, userId}: Props) {
   };
 
   const handleEliminar = async (placa: string) => {
-    await eliminarCarro(placa);
+    let res = await eliminarCarro(placa);
+    const cargarCarros = async () => {
+      let res = await obtenerCarroPorPropietario(userId);
+      setLista(res as Carro[]);
+    }
+    cargarCarros();2
     router.refresh();
   };
 

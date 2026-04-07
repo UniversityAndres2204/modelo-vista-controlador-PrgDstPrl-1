@@ -64,21 +64,13 @@ export const resolvers = {
     },
 
     // CARROS
-    crearCarro: async (_: any, args: any) => {
+    crearCarro: async (_: any, args: any, ctx: any) => {
       const supabase = await createClient();
       const {placa, marca, tipo, fecha_matricula, propietario} = args;
 
-      const {d, e} = await supabase
-        .from("propietario")
-        .select("*")
-        .eq("id", propietario);
-
-      console.log(d, e);
-
-
       const { data, error } = await supabase
         .from("carro")
-        .insert({placa, marca, tipo, fecha_matricula, propietario})
+        .insert({placa, marca, tipo, fecha_matricula, propietario: propietario.id})
         .select()
         .single();
 
@@ -89,18 +81,16 @@ export const resolvers = {
     },
 
     updateCarro: async (_: any, args: any, ctx: any) => {
-      const { placa, marca, tipo, fecha_matricula } = args;
-      const supabaseClient = ctx?.supabase || (await createClient());
-      const { data, error } = await supabaseClient
+      const supabase = await createClient();
+      const  { data, error }  = await supabase
         .from("carro")
-        .update({ placa, marca, tipo, fecha_matricula})
-        .eq("placa", placa)
+        .update( args )
+        .eq("placa", args.placa)
         .select()
         .single();
 
       if (error) throw new Error(error.message);
       if (!data) throw new Error("Carro no encontrado");
-
       return data;
     },
 
@@ -112,7 +102,7 @@ export const resolvers = {
         .eq("placa", placa);
 
       if (error) throw new Error(error.message);
-      return true;
+      return data;
     },
 
     // INFRACCIONES
