@@ -63,6 +63,31 @@ export const resolvers = {
       return data;
     },
 
+    updatePropietario: async (_: any, args: any, ctx: any) => {
+      const supabase = await createClient();
+      const  { data, error }  = await supabase
+        .from("propietario")
+        .update( args )
+        .eq("identificacion", args.identificacion)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      if (!data) throw new Error("Propietario no encontrado");
+      return data;
+    },
+
+    deletePropietario: async (_: any, { identificacion }: any) => {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from("propietario")
+        .delete()
+        .eq("identificacion", identificacion);
+
+      if (error) throw new Error(error.message);
+      return true;
+    },
+
     // CARROS
     crearCarro: async (_: any, args: any, ctx: any) => {
       const supabase = await createClient();
@@ -102,7 +127,7 @@ export const resolvers = {
         .eq("placa", placa);
 
       if (error) throw new Error(error.message);
-      return data;
+      return true;
     },
 
     // INFRACCIONES
@@ -120,6 +145,36 @@ export const resolvers = {
 
       if (error) throw new Error(error.message);
       return data;
+    },
+
+    updateInfraccion: async (_: any, args: any, ctx: any) => {
+      const supabase = await createClient();
+      const  { data, error }  = await supabase
+        .from("infraccion")
+        .update( {
+          placa_carro: args.placa_carro,
+          accionada: args.accionada,
+          fecha: args.fecha,
+        } )
+        .eq("id", args.id)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      if (!data) throw new Error("infraccion no encontrada");
+
+      return data;
+    },
+
+    deleteInfraccion: async (_: any, { id }: any) => {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from("infraccion")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw new Error(error.message);
+      return true;
     },
   },
 

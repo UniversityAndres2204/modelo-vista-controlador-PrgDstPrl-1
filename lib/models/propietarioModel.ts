@@ -36,11 +36,42 @@ const UPDATE_PROPIETARIO = gql`
   }
 `;
 
+const UPDATE_PROPIETARIO2 = gql`
+  mutation UpdatePropietario(
+    $identificacion: String!
+    $nombre: String
+    $tipo: String
+    $direccion: String
+  ) {
+    updatePropietario(
+      identificacion: $identificacion
+      nombre: $nombre
+      tipo: $tipo
+      direccion: $direccion
+    ) {
+     id
+     identificacion
+     tipo
+     nombre
+     direccion
+     carros{
+      id
+     }
+    }
+  }
+`;
+
 const DELETE_PROPIETARIO = gql`
 mutation DeletePropietario($id: BigInt!) {
     deleteFrompropietarioCollection(filter: { identificacion: { eq: $id } }) {
       affectedCount
     }
+  }
+`;
+
+const DELETE_PROPIETARIO2 = gql`
+  mutation DeletePropietario($identificacion: String!) {
+    deletePropietario(identificacion: $identificacion)
   }
 `;
 

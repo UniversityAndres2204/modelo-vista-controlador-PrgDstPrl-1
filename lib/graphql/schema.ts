@@ -28,7 +28,7 @@ export const typeDefs = /* GraphQL */ `
     fecha: String!
     accionada: String!
     carro: Carro!
-    carroPlaca: String!
+    carroPlaca: String
   }
 
   type Query {
@@ -45,6 +45,15 @@ export const typeDefs = /* GraphQL */ `
       direccion: String!
       tipo: String!
     ): Propietario!
+
+    updatePropietario(
+      identificacion: String!
+      nombre: String
+      tipo: String
+      direccion: String
+    ): Propietario!
+
+    deletePropietario(identificacion: String!): Boolean!
 
     crearCarro(
       placa: String!
@@ -68,5 +77,14 @@ export const typeDefs = /* GraphQL */ `
       fecha: String!
       accionada: String!
     ): Infraccion!
+
+    updateInfraccion(
+      id: ID!
+      placa_carro: String
+      accionada: String
+      fecha: String
+    ): Infraccion!
+
+    deleteInfraccion(id: ID!): Boolean!
   }
 `;

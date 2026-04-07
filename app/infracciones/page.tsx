@@ -31,11 +31,11 @@ export default async function Home() {
     throw new Error("User not authenticated");
   }
 
-  const {data} = await query({
-    query: GET_INFRACCIONES,
-  });
+  // const {data} = await query({
+  //   query: GET_INFRACCIONES,
+  // });
 
-  console.log(data.infraccionCollection.edges);
+  // console.log(data.infraccionCollection.edges);
 
   return (
     <main className="min-h-screen flex flex-col items-center">

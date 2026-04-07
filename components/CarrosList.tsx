@@ -85,7 +85,7 @@ export default function CarrosList({carros, userId}: Props) {
       let res = await obtenerCarroPorPropietario(userId);
       setLista(res as Carro[]);
     }
-    cargarCarros();2
+    cargarCarros();
     router.refresh();
   };
 
